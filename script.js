@@ -17,6 +17,9 @@ let isSpinning = false; // 현재 회전 중인지 확인
 let currentRotation = 0; // 현재 회전 각도
 let spinAnimation; // 애니메이션 참조
 let currentMode = 'reward'; // 현재 모드: 'reward' 또는 'penalty'
+let audioContext; // 오디오 컨텍스트
+let tickSound = null; // 틱 소리
+let resultSound = null; // 결과 소리
 
 // DOM 요소들
 const spinner = document.getElementById('spinner');
@@ -33,12 +36,69 @@ const toggleManagementBtn = document.getElementById('toggleManagementBtn');
 const itemManagement = document.getElementById('itemManagement');
 
 /**
+ * 오디오 컨텍스트 초기화 함수
+ */
+function initAudio() {
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+        console.log('Web Audio API를 지원하지 않는 브라우저입니다.');
+    }
+}
+
+/**
+ * 틱 소리를 생성하는 함수 (Web Audio API 사용)
+ */
+function playTickSound() {
+    if (!audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+}
+
+/**
+ * 결과 발표 소리를 생성하는 함수
+ */
+function playResultSound() {
+    if (!audioContext) return;
+
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.1);
+    oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.2);
+
+    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+/**
  * 페이지 로드 시 실행되는 초기화 함수
  * 룰렛의 부채꼴 조각들을 생성하고 이벤트 리스너를 설정
  */
 function init() {
     createSpinnerSegments();
     updateItemsList();
+    initAudio();
 
     // 이벤트 리스너 설정
     spinButton.addEventListener('click', handleSpinButtonClick);
@@ -49,6 +109,13 @@ function init() {
     newItemInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') addNewItem();
     });
+
+    // 사용자 상호작용 후 오디오 컨텍스트 활성화
+    document.addEventListener('click', () => {
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    }, { once: true });
 }
 
 /**
@@ -105,23 +172,20 @@ function createSpinnerSegments() {
         // 모드에 따라 다른 색상 클래스 적용
         segment.className = `segment ${currentMode === 'reward' ? 'positive' : 'negative'}`;
 
-        // 각 조각의 회전 각도 계산
+        // 각 조각의 회전 각도 계산 (12시 방향부터 시계방향)
         const rotation = index * anglePerSegment;
+        const skewY = 90 - anglePerSegment;
 
         // CSS transform을 사용하여 조각을 적절한 위치에 배치
-        // rotate: 조각을 회전시킴
-        // skew: 부채꼴 모양을 만들기 위해 기울임
-        const skewAngle = 90 - anglePerSegment;
-        segment.style.transform = `rotate(${rotation}deg) skew(${skewAngle}deg)`;
+        segment.style.transform = `rotate(${rotation}deg) skewY(${skewY}deg)`;
 
         // 조각 내부의 텍스트 컨테이너 생성
         const segmentText = document.createElement('div');
         segmentText.className = 'segment-text';
         segmentText.textContent = itemText;
 
-        // 텍스트를 다시 바르게 보이도록 회전 (부채꼴 중앙에 위치)
-        const textRotation = -(rotation + anglePerSegment / 2);
-        segmentText.style.transform = `rotate(${textRotation}deg) skew(${-skewAngle}deg)`;
+        // 텍스트를 바르게 보이도록 역변환
+        segmentText.style.transform = `skewY(${-skewY}deg) rotate(${anglePerSegment / 2}deg)`;
 
         segment.appendChild(segmentText);
         spinner.appendChild(segment);
@@ -152,11 +216,26 @@ function startSpinning() {
     // CSS 애니메이션 클래스 추가로 빠른 회전 시작
     spinner.classList.add('spinning');
 
+    // 틱 소리를 위한 변수
+    let lastTickRotation = 0;
+    const items = getCurrentItems();
+    const anglePerSegment = 360 / items.length;
+
     // 회전 각도를 지속적으로 업데이트하는 애니메이션 루프
     function animateRotation() {
         if (isSpinning) {
             currentRotation += 15; // 매 프레임마다 15도씩 회전
             currentRotation %= 360; // 360도를 넘으면 0부터 다시 시작
+
+            // 부채꼴 경계를 지날 때마다 틱 소리 재생
+            const currentSegment = Math.floor(currentRotation / anglePerSegment);
+            const lastSegment = Math.floor(lastTickRotation / anglePerSegment);
+
+            if (currentSegment !== lastSegment) {
+                playTickSound();
+            }
+
+            lastTickRotation = currentRotation;
             spinAnimation = requestAnimationFrame(animateRotation);
         }
     }
@@ -204,6 +283,7 @@ function stopSpinning() {
     // 애니메이션 완료 후 최종 결과 확정
     setTimeout(() => {
         displayResult(selectedItem);
+        playResultSound(); // 결과 발표 소리
 
         // 다음 회전을 위해 transition 제거
         spinner.style.transition = '';
@@ -220,14 +300,13 @@ function getSelectedItem(rotation) {
     const totalItems = items.length;
     const anglePerSegment = 360 / totalItems;
 
-    // 포인터는 12시 방향(0도)을 가리키므로, 회전 각도를 보정
-    // 룰렛이 시계방향으로 회전하므로 각도를 뒤집어서 계산
-    // 각 부채꼴의 중심점을 기준으로 계산하도록 개선
+    // 포인터는 12시 방향(0도)을 가리킴
+    // 룰렛이 시계방향으로 회전하므로 음의 방향으로 계산
+    // 회전각도를 정규화하고 첫 번째 항목이 12시 방향에 시작하도록 보정
     const normalizedRotation = (360 - (rotation % 360)) % 360;
-    const offsetRotation = (normalizedRotation + anglePerSegment / 2) % 360;
 
-    // 어떤 조각이 선택되었는지 계산
-    const selectedIndex = Math.floor(offsetRotation / anglePerSegment) % totalItems;
+    // 어떤 조각이 선택되었는지 계산 (포인터가 가리키는 부채꼴)
+    const selectedIndex = Math.floor(normalizedRotation / anglePerSegment) % totalItems;
 
     return items[selectedIndex];
 }
