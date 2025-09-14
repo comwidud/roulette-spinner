@@ -119,8 +119,8 @@ function createSpinnerSegments() {
         segmentText.className = 'segment-text';
         segmentText.textContent = itemText;
 
-        // 텍스트를 다시 바르게 보이도록 회전
-        const textRotation = anglePerSegment / 2;
+        // 텍스트를 다시 바르게 보이도록 회전 (부채꼴 중앙에 위치)
+        const textRotation = -(rotation + anglePerSegment / 2);
         segmentText.style.transform = `rotate(${textRotation}deg) skew(${-skewAngle}deg)`;
 
         segment.appendChild(segmentText);
@@ -186,19 +186,28 @@ function stopSpinning() {
     const additionalSpins = Math.random() * 5 + 5; // 5-10번 추가 회전
     const finalRotation = currentRotation + (additionalSpins * 360);
 
-    // 부드러운 감속 애니메이션 적용
-    spinner.style.transition = 'transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+    // 부드러운 감속 애니메이션 적용 (2초로 단축)
+    const animationDuration = 2000; // 2초
+    spinner.style.transition = `transform ${animationDuration / 1000}s cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
     spinner.style.transform = `rotate(${finalRotation}deg)`;
 
-    // 애니메이션 완료 후 결과 표시
+    // 최종 결과 미리 계산하여 즉시 표시
+    currentRotation = finalRotation % 360;
+    const selectedItem = getSelectedItem(currentRotation);
+
+    // 결과를 즉시 표시하되 "선택 중..." 표시
+    resultDisplay.textContent = `선택 중... → ${selectedItem}`;
+    resultDisplay.style.backgroundColor = '#fff3cd';
+    resultDisplay.style.borderColor = '#ffc107';
+    resultDisplay.style.color = '#856404';
+
+    // 애니메이션 완료 후 최종 결과 확정
     setTimeout(() => {
-        currentRotation = finalRotation % 360;
-        const selectedItem = getSelectedItem(currentRotation);
         displayResult(selectedItem);
 
         // 다음 회전을 위해 transition 제거
         spinner.style.transition = '';
-    }, 3000); // 3초 감속 애니메이션 시간
+    }, animationDuration);
 }
 
 /**
@@ -213,10 +222,12 @@ function getSelectedItem(rotation) {
 
     // 포인터는 12시 방향(0도)을 가리키므로, 회전 각도를 보정
     // 룰렛이 시계방향으로 회전하므로 각도를 뒤집어서 계산
-    const adjustedAngle = (360 - rotation) % 360;
+    // 각 부채꼴의 중심점을 기준으로 계산하도록 개선
+    const normalizedRotation = (360 - (rotation % 360)) % 360;
+    const offsetRotation = (normalizedRotation + anglePerSegment / 2) % 360;
 
     // 어떤 조각이 선택되었는지 계산
-    const selectedIndex = Math.floor(adjustedAngle / anglePerSegment);
+    const selectedIndex = Math.floor(offsetRotation / anglePerSegment) % totalItems;
 
     return items[selectedIndex];
 }
