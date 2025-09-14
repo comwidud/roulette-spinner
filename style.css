@@ -1,0 +1,363 @@
+/* 전체 페이지 기본 스타일 */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+}
+
+/* 룰렛 스피너 컨테이너 스타일 */
+.spinner-container {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto 40px auto;
+}
+
+/* 고정 포인터 스타일 - 룰렛 상단 중앙을 가리킴 */
+.pointer {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 30px solid #ff4444;
+    z-index: 10;
+}
+
+/* 룰렛 스피너 기본 스타일 */
+.spinner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    border: 5px solid #333;
+    background-color: #fff;
+    transition: transform 0.1s ease-out;
+}
+
+/* 각 부채꼴 조각 스타일 */
+.segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 상점 항목 (긍정적) 색상 */
+.segment.positive {
+    background: linear-gradient(45deg, #4CAF50, #2196F3);
+}
+
+/* 벌점 항목 (부정적) 색상 */
+.segment.negative {
+    background: linear-gradient(45deg, #f44336, #ff9800);
+}
+
+/* 조각 텍스트 스타일 - 회전된 텍스트를 다시 바로잡음 */
+.segment-text {
+    transform: rotate(-50deg);
+    text-align: center;
+    padding: 10px;
+    word-wrap: break-word;
+    max-width: 120px;
+}
+
+/* 결과 표시 영역 스타일 */
+.result-container {
+    margin: 40px 0;
+}
+
+.result-container h2 {
+    color: #666;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.result {
+    font-size: 2em;
+    font-weight: bold;
+    color: #333;
+    padding: 20px;
+    border: 3px solid #ddd;
+    border-radius: 15px;
+    background-color: #f9f9f9;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 컨트롤 버튼 스타일 */
+.controls {
+    margin-top: 30px;
+}
+
+.spin-button {
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.spin-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+}
+
+.spin-button:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 룰렛이 회전 중일 때의 애니메이션 */
+.spinner.spinning {
+    animation: spin 0.1s linear infinite;
+}
+
+/* 회전 애니메이션 정의 */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 모드 선택 버튼 스타일 */
+.mode-selection {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mode-button {
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    background-color: white;
+    color: #666;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.mode-button:hover {
+    border-color: #999;
+    color: #333;
+}
+
+.mode-button.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-color: #667eea;
+    color: white;
+}
+
+/* 현재 모드 표시 */
+.current-mode {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.current-mode h2 {
+    color: #333;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+/* 항목 관리 영역 스타일 */
+.item-management {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 15px;
+    border: 2px solid #eee;
+}
+
+.item-management h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 새 항목 추가 영역 */
+.add-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+#newItemInput {
+    flex: 1;
+    max-width: 300px;
+    padding: 10px 15px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    font-size: 1em;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#newItemInput:focus {
+    border-color: #667eea;
+}
+
+.add-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #4CAF50, #2196F3);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.add-button:hover {
+    transform: translateY(-2px);
+}
+
+/* 항목 목록 스타일 */
+.items-list h4 {
+    color: #555;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#itemsList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.item-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin: 5px 0;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: background-color 0.2s;
+}
+
+.item-entry:hover {
+    background-color: #f0f0f0;
+}
+
+.item-text {
+    flex: 1;
+    font-weight: bold;
+    color: #333;
+}
+
+.delete-button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 15px;
+    background-color: #f44336;
+    color: white;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+/* 반응형 디자인 - 작은 화면 대응 */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .spinner-container {
+        width: 300px;
+        height: 300px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .segment {
+        font-size: 12px;
+    }
+
+    .segment-text {
+        max-width: 80px;
+    }
+
+    .result {
+        font-size: 1.5em;
+        min-height: 50px;
+    }
+
+    .mode-button {
+        padding: 8px 16px;
+        font-size: 1em;
+    }
+
+    .add-item {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #newItemInput {
+        max-width: none;
+        width: 100%;
+    }
+
+    .item-management {
+        padding: 15px;
+        margin-top: 30px;
+    }
+}

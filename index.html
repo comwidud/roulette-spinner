@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>룰렛 스피너</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>상점/벌점 룰렛</h1>
+
+        <!-- 모드 선택 버튼 -->
+        <div class="mode-selection">
+            <button id="rewardModeBtn" class="mode-button active">상점</button>
+            <button id="penaltyModeBtn" class="mode-button">벌점</button>
+        </div>
+
+        <!-- 현재 모드 표시 -->
+        <div class="current-mode">
+            <h2 id="currentModeTitle">상점 모드</h2>
+        </div>
+
+        <!-- 룰렛 스피너 컨테이너 -->
+        <div class="spinner-container">
+            <!-- 고정 포인터 (가운데 위쪽을 가리킴) -->
+            <div class="pointer"></div>
+
+            <!-- 회전하는 룰렛 판 -->
+            <div class="spinner" id="spinner">
+                <!-- 각 부채꼴 조각들이 JavaScript로 동적 생성됨 -->
+            </div>
+        </div>
+
+        <!-- 결과 표시 영역 -->
+        <div class="result-container">
+            <h2>결과</h2>
+            <div class="result" id="result">룰렛을 돌려보세요!</div>
+        </div>
+
+        <!-- 컨트롤 버튼 -->
+        <div class="controls">
+            <button id="spinButton" class="spin-button">돌리기</button>
+        </div>
+
+        <!-- 항목 관리 영역 -->
+        <div class="item-management">
+            <h3>항목 관리</h3>
+
+            <!-- 새 항목 추가 -->
+            <div class="add-item">
+                <input type="text" id="newItemInput" placeholder="새 항목을 입력하세요" maxlength="20">
+                <button id="addItemBtn" class="add-button">추가</button>
+            </div>
+
+            <!-- 기존 항목 목록 -->
+            <div class="items-list">
+                <h4 id="itemsListTitle">상점 항목들</h4>
+                <ul id="itemsList">
+                    <!-- 항목들이 JavaScript로 동적 생성됨 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
