@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>룰렛 스피너</title>
+    <title>돌려 돌려 돌림판</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>상점/벌점 룰렛</h1>
+        <h1>돌려 돌려 돌림판</h1>
 
         <!-- 모드 선택 버튼 -->
         <div class="mode-selection">
@@ -43,8 +43,13 @@
             <button id="spinButton" class="spin-button">돌리기</button>
         </div>
 
-        <!-- 항목 관리 영역 -->
-        <div class="item-management">
+        <!-- 항목 관리 토글 버튼 -->
+        <div class="item-management-toggle">
+            <button id="toggleManagementBtn" class="toggle-button">항목 관리</button>
+        </div>
+
+        <!-- 항목 관리 영역 (기본적으로 숨김) -->
+        <div class="item-management" id="itemManagement" style="display: none;">
             <h3>항목 관리</h3>
 
             <!-- 새 항목 추가 -->

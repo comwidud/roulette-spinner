@@ -41,7 +41,7 @@ HTML, CSS, JavaScript로 제작된 상점/벌점 룰렛 스피너입니다.
 
 ## 라이브 데모
 
-배포 후 URL이 여기에 표시됩니다.
+🚀 **[https://roulette-spinner-sepia.vercel.app/](https://roulette-spinner-sepia.vercel.app/)**
 
 ## 기술 스택
 

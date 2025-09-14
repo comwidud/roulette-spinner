@@ -29,6 +29,8 @@ const newItemInput = document.getElementById('newItemInput');
 const addItemBtn = document.getElementById('addItemBtn');
 const itemsList = document.getElementById('itemsList');
 const itemsListTitle = document.getElementById('itemsListTitle');
+const toggleManagementBtn = document.getElementById('toggleManagementBtn');
+const itemManagement = document.getElementById('itemManagement');
 
 /**
  * 페이지 로드 시 실행되는 초기화 함수
@@ -43,6 +45,7 @@ function init() {
     rewardModeBtn.addEventListener('click', () => switchMode('reward'));
     penaltyModeBtn.addEventListener('click', () => switchMode('penalty'));
     addItemBtn.addEventListener('click', addNewItem);
+    toggleManagementBtn.addEventListener('click', toggleItemManagement);
     newItemInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') addNewItem();
     });
@@ -108,7 +111,8 @@ function createSpinnerSegments() {
         // CSS transform을 사용하여 조각을 적절한 위치에 배치
         // rotate: 조각을 회전시킴
         // skew: 부채꼴 모양을 만들기 위해 기울임
-        segment.style.transform = `rotate(${rotation}deg) skew(${90 - anglePerSegment}deg)`;
+        const skewAngle = 90 - anglePerSegment;
+        segment.style.transform = `rotate(${rotation}deg) skew(${skewAngle}deg)`;
 
         // 조각 내부의 텍스트 컨테이너 생성
         const segmentText = document.createElement('div');
@@ -117,7 +121,7 @@ function createSpinnerSegments() {
 
         // 텍스트를 다시 바르게 보이도록 회전
         const textRotation = anglePerSegment / 2;
-        segmentText.style.transform = `rotate(${textRotation}deg) skew(${-(90 - anglePerSegment)}deg)`;
+        segmentText.style.transform = `rotate(${textRotation}deg) skew(${-skewAngle}deg)`;
 
         segment.appendChild(segmentText);
         spinner.appendChild(segment);
@@ -233,6 +237,23 @@ function displayResult(itemText) {
         resultDisplay.style.backgroundColor = '#ffe8e8';
         resultDisplay.style.borderColor = '#f44336';
         resultDisplay.style.color = '#c62828';
+    }
+}
+
+/**
+ * 항목 관리 영역을 토글하는 함수
+ */
+function toggleItemManagement() {
+    const isHidden = itemManagement.style.display === 'none';
+
+    if (isHidden) {
+        itemManagement.style.display = 'block';
+        toggleManagementBtn.classList.add('active');
+        toggleManagementBtn.textContent = '항목 관리 닫기';
+    } else {
+        itemManagement.style.display = 'none';
+        toggleManagementBtn.classList.remove('active');
+        toggleManagementBtn.textContent = '항목 관리';
     }
 }
 
